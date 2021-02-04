@@ -3,6 +3,8 @@ import { useState } from "react";
 
 import CustomModal from "./components/Modal.jsx";
 
+import axios from "axios";
+
 const todoItems = [
   {
     id: 1,
