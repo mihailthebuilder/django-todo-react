@@ -1,6 +1,8 @@
 import "./App.scss";
 import { useState } from "react";
 
+import CustomModal from "./components/Modal.jsx";
+
 const todoItems = [
   {
     id: 1,
@@ -31,6 +33,37 @@ const todoItems = [
 const App = () => {
   const [viewCompleted, setViewCompleted] = useState(false);
   const [todoList, setTodoList] = useState(todoItems);
+  const [modal, setModal] = useState(false);
+  const [activeItem, setActiveItem] = useState({
+    title: "",
+    description: "",
+    completed: false,
+  });
+
+  const toggle = () => {
+    setModal((previousValue) => !previousValue);
+  };
+
+  const handleSubmit = (item) => {
+    toggle();
+    alert("save" + JSON.stringify(item));
+  };
+
+  const handleDelete = (item) => {
+    toggle();
+    alert("delete" + JSON.stringify(item));
+  };
+
+  const createItem = () => {
+    const item = { title: "", description: "", completed: false };
+    setActiveItem(item);
+    setModal((previousValue) => !previousValue);
+  };
+
+  const editItem = (item) => {
+    setActiveItem(item);
+    setModal((previousValue) => !previousValue);
+  };
 
   const displayCompleted = (status) => {
     if (status) {
@@ -70,13 +103,23 @@ const App = () => {
       >
         <span
           className={`todo-title mr-2 ${viewCompleted ? "completed-todo" : ""}`}
+          title={item.description}
+          data-toggle="tooltip"
+          data-placement="top"
         >
           {item.title}
         </span>
 
         <span>
-          <button className="btn btn-secondary mr-2">Edit</button>
-          <button className="btn btn-danger">Delete</button>
+          <button
+            className="btn btn-secondary mr-2"
+            onClick={() => editItem(item)}
+          >
+            Edit
+          </button>
+          <button className="btn btn-danger" onClick={() => handleDelete(item)}>
+            Delete
+          </button>
         </span>
       </li>
     ));
@@ -85,15 +128,26 @@ const App = () => {
   return (
     <main className="content">
       <h1 className="text-white text-uppercase text-center my-4">Todo app</h1>
-      <div className="row">
+      <div className="row ">
         <div className="col-md-6 col-sm-10 mx-auto p-0">
           <div className="card p-3">
-            <button className="btn btn-primary">Add task</button>
+            <div className="">
+              <button className="btn btn-primary" onClick={createItem}>
+                Add task
+              </button>
+            </div>
+            {renderTabList()}
+            <ul className="list-group list-group-flush">{renderItems()}</ul>
           </div>
-          {renderTabList()}
-          <ul className="list-group list-group-flush">{renderItems()}</ul>
         </div>
       </div>
+      {modal ? (
+        <CustomModal
+          activeItemProp={activeItem}
+          toggle={toggle}
+          onSave={handleSubmit}
+        />
+      ) : null}
     </main>
   );
 };
